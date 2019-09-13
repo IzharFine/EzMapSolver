@@ -78,9 +78,9 @@ The solution should be a text describing the roads, one line per road (each line
 
 For example (part of the solution to the example):
 
-(6, 7), (6, 6), (5, 5), (4, 5), (3, 5)<br>
-(6, 7), (6, 6), (5, 5), (4, 5), (3, 4), (2, 5), (1, 5)<br>
-(6, 7), (6, 6), (5, 5), (5, 4), (6, 4)<br>
+(6, 7), (6, 6), (5, 5), (4, 5), (3, 5)
+(6, 7), (6, 6), (5, 5), (4, 5), (3, 4), (2, 5), (1, 5)
+(6, 7), (6, 6), (5, 5), (5, 4), (6, 4)
 ...
 
 
