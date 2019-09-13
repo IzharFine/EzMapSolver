@@ -80,7 +80,7 @@ class Game{
                         this._destroyAllRoads();
                         this.BestCost = shortestRoad.Cost;
                         this.BestRoads = Object.assign({}, shortestRoad.Road);
-                        this._getLowerCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
+                        this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
                         if(!city.BestHistoryByResource[resource])
                             city.BestHistoryByResource[resource] = [];
                         city.BestHistoryByResource[resource].push({"City": requiredCity, "Cost": this.BestCost, "Roads": this.BestRoads});
@@ -129,12 +129,12 @@ class Game{
             };
         }
         this.Map.Tiles[currentCoordinates.Row][currentCoordinates.Column].buildRoad();
-        cost += this._getCoordinateCost(nextMove);
+        cost += this.Map._getCoordinateCost(nextMove);
         road.push(nextMove);
         return this._getShortestRoad(nextMove, targetCoordinates, road, cost);
     }
 
-    _getLowerCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
+    _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
         let topPoint = this._moveTop(currentCoordinates.Column, currentCoordinates.Row);
         if(lastMove != LastMoveEnum.Bottom){
             this._handleMoveToPoint(topPoint, targetCoordinates, LastMoveEnum.Top, moveHistory, currentCost);
@@ -174,27 +174,16 @@ class Game{
             }
             return;
         }
-        if(!this._validateRange(point) && this._getCoordinateCost(point) + currentCost < this.BestCost && !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true)){
+        if(!this.Map._validateRange(point) && this.Map._getCoordinateCost(point) + currentCost < this.BestCost && !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true)){
             let targetTile = this.Map.Tiles[point.Row][point.Column];
             targetTile.buildRoad();
             moveHistory.push(point);
             
-            this._getLowerCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
+            this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
 
             moveHistory.pop();
             targetTile.destroyRoad();
         }
-    }
-
-    _getCoordinateCost(coordinate){
-        return this.Map.Tiles[coordinate.Row][coordinate.Column].Terrain.Cost;
-    }
-
-    _validateRange(currentCoordinates){
-        return currentCoordinates.Column < 0 
-        || currentCoordinates.Column >= this.Map.Tiles[0].length 
-        || currentCoordinates.Row < 0 
-        || currentCoordinates.Row >= this.Map.Tiles.length;
     }
 
     _isArrivedToCity(currentCoordinates, targetCoordinates){
@@ -403,12 +392,22 @@ class Map{
         let div = document.createElement("div");
         this.DOMObj = div;
     }
+
+    _validateRange(currentCoordinates){
+        return currentCoordinates.Column < 0 
+        || currentCoordinates.Column >= this.Tiles[0].length 
+        || currentCoordinates.Row < 0 
+        || currentCoordinates.Row >= this.Tiles.length;
+    }
+
+    _getCoordinateCost(coordinate){
+        return this.Tiles[coordinate.Row][coordinate.Column].Terrain.Cost;
+    }
 }
 
 
 class Tile{
     constructor(terrain){
-        //this.Coordinates = coordinates;
         this.Terrain = terrain;
         this.City = null;
         this.DOMObj = null;
