@@ -176,14 +176,12 @@ class Game{
         }
         if(!this._validateRange(point) && this._getCoordinateCost(point) + currentCost < this.BestCost && !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true)){
             let targetTile = this.Map.Tiles[point.Row][point.Column];
-            currentCost += targetTile.Terrain.Cost;
             targetTile.buildRoad();
             moveHistory.push(point);
             
-            this._getLowerCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost);
+            this._getLowerCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
 
             moveHistory.pop();
-            currentCost -= targetTile.Terrain.Cost;
             targetTile.destroyRoad();
         }
     }
