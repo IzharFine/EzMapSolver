@@ -51,14 +51,14 @@ The cities in the map above are on tiles: Ao (4,4), Bel (3,5), Chance (4,3),
  
  Example input (same as the map above):
  
- [open, open, open, wood, wood, wood, wood, wood],<br>
- [open, open, wood, open, open, wood, wood, wood],<br>
- [open, open, open, open, wood, wood, open, open],<br>
- [open, open, open, mountain, open, wood, wood, mountain],<br>
- [open, open, desert, desert, desert, open, wood, wood],<br>
- [wood, open, desert, desert, open, open, wood, wood],<br>
- [wood, wood, open, open, mountain, desert, open, open],<br>
- [wood, wood, open, wood, desert, open, mountain, mountain]
+ [open, open, open, wood, wood, wood, wood, wood],
+ [open, open, wood, open, open, wood, wood, wood],
+ [open, open, open, open, wood, wood, open, open],
+ [open, open, open, mountain, open, wood, wood, mountain],
+ [open, open, desert, desert, desert, open, wood, wood],
+ [wood, open, desert, desert, open, open, wood, wood],
+ [wood, wood, open, open, mountain, desert, open, open],
+ [wood, wood, open, wood, desert, open, mountain, mountain],
 
  Cities:
  
