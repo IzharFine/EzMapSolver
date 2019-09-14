@@ -72,7 +72,7 @@ class Game{
                 missingResources.forEach(resource => {
                     let requiredCities = this._getCitiesByResource(resource);
                     requiredCities.forEach(requiredCity => {
-                        let shortestRoad = this._getShortestRoad(city.Coordinates, requiredCity.Coordinates, [city.Coordinates], 0);
+                        let shortestRoad = this._getShortestRoad(city.Coordinates, requiredCity.Coordinates, [city.Coordinates], 0, true);
 
                         this.Map.Tiles[city.Coordinates.Row][city.Coordinates.Column].DOMObj.classList.add("running-now");
                         this.Map.Tiles[requiredCity.Coordinates.Row][requiredCity.Coordinates.Column].DOMObj.classList.add("running-now");
@@ -120,7 +120,7 @@ class Game{
         })
     }
 
-    _getShortestRoad(currentCoordinates, targetCoordinates, road, cost){
+    _getShortestRoad(currentCoordinates, targetCoordinates, road, cost, canDraw){
         let nextMove = this._defineShortestDirection(currentCoordinates, targetCoordinates);
         if(this._isArrivedToCity(nextMove, targetCoordinates)){
             return {
@@ -128,10 +128,11 @@ class Game{
                 Road: road
             };
         }
-        this.Map.Tiles[currentCoordinates.Row][currentCoordinates.Column].buildRoad();
+        if(canDraw)
+            this.Map.Tiles[currentCoordinates.Row][currentCoordinates.Column].buildRoad();
         cost += this.Map._getCoordinateCost(nextMove);
         road.push(nextMove);
-        return this._getShortestRoad(nextMove, targetCoordinates, road, cost);
+        return this._getShortestRoad(nextMove, targetCoordinates, road, cost, canDraw);
     }
 
     _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
@@ -174,7 +175,7 @@ class Game{
             }
             return;
         }
-        if(!this.Map._validateRange(point) && this.Map._getCoordinateCost(point) + currentCost < this.BestCost && !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true)){
+        if(this._canMoveToPoint(point, targetCoordinates, currentCost, moveHistory)){
             let targetTile = this.Map.Tiles[point.Row][point.Column];
             targetTile.buildRoad();
             moveHistory.push(point);
@@ -184,6 +185,13 @@ class Game{
             moveHistory.pop();
             targetTile.destroyRoad();
         }
+    }
+
+    _canMoveToPoint(point, targetCoordinates, currentCost, moveHistory){
+        return !this.Map._isInvalidRange(point) &&
+         this.Map._getCoordinateCost(point) + currentCost < this.BestCost &&
+         !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true) &&
+         this._getShortestRoad(point, targetCoordinates, [], 0, false).Road.length + currentCost < this.BestCost;
     }
 
     _isArrivedToCity(currentCoordinates, targetCoordinates){
@@ -393,7 +401,7 @@ class Map{
         this.DOMObj = div;
     }
 
-    _validateRange(currentCoordinates){
+    _isInvalidRange(currentCoordinates){
         return currentCoordinates.Column < 0 
         || currentCoordinates.Column >= this.Tiles[0].length 
         || currentCoordinates.Row < 0 
