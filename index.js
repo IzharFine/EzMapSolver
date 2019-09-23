@@ -72,24 +72,32 @@ class Game{
                 missingResources.forEach(resource => {
                     let requiredCities = this._getCitiesByResource(resource);
                     requiredCities.forEach(requiredCity => {
+                        this._markPoint(city, false);
+                        this._markPoint(requiredCity, false);
+
                         let shortestRoad = this._getShortestRoad(city.Coordinates, requiredCity.Coordinates, [city.Coordinates], 0, true);
-
-                        this.Map.Tiles[city.Coordinates.Row][city.Coordinates.Column].DOMObj.classList.add("running-now");
-                        this.Map.Tiles[requiredCity.Coordinates.Row][requiredCity.Coordinates.Column].DOMObj.classList.add("running-now");
-
-                        this._destroyAllRoads();
+                        this._destroyAllRoads();       
                         this.BestCost = shortestRoad.Cost;
                         this.BestRoads = Object.assign({}, shortestRoad.Road);
+
                         this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
                         if(!city.BestHistoryByResource[resource])
                             city.BestHistoryByResource[resource] = [];
                         city.BestHistoryByResource[resource].push({"City": requiredCity, "Cost": this.BestCost, "Roads": this.BestRoads});
-                        this.Map.Tiles[city.Coordinates.Row][city.Coordinates.Column].DOMObj.classList.remove("running-now");
-                        this.Map.Tiles[requiredCity.Coordinates.Row][requiredCity.Coordinates.Column].DOMObj.classList.remove("running-now");
+                        
+                        this._markPoint(city, true);
+                        this._markPoint(requiredCity, true);
                     });
                 });
             }
         });
+    }
+
+    _markPoint(point, unMark){
+        if(!unMark)
+            this.Map.Tiles[point.Coordinates.Row][point.Coordinates.Column].DOMObj.classList.add("running-now");
+        else
+            this.Map.Tiles[point.Coordinates.Row][point.Coordinates.Column].DOMObj.classList.remove("running-now");
     }
 
     _findBestRoadsCombination(city, bestCityRoad, currentCost, moveHistory){
