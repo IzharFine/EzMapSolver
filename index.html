@@ -94,14 +94,13 @@
                 (5, 1), Ore
                 (6, 7), Produce, Ore
         </textarea>
+        <input type="button" value="solve" onClick="start()">
     </body>
 </html>
 
 <script>
-    var game;
-    
-    document.addEventListener('DOMContentLoaded', ()=>{
-        game = new Game(document.getElementById('Terrains').value, document.getElementById('Cities').value);
+    function start(){
+        var game = new Game(document.getElementById('Terrains').value, document.getElementById('Cities').value);
         game.start();
-    });
+    }
 </script>
