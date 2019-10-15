@@ -115,10 +115,12 @@ class Game{
         }
         missingResources.forEach(missingResource => {
             let bestHistoryByResource = city.BestHistoryByResource[missingResource];
-            moveHistory.push(bestHistoryByResource[0]);
-            this._findBestRoadsCombination(city, bestHistoryByResource[0].City, currentCost + bestHistoryByResource[0].Cost, moveHistory);
-            moveHistory.pop();
-            city.ConnectedCities.pop();
+            bestHistoryByResource.forEach(bestHistory => {
+                moveHistory.push(bestHistory);
+                this._findBestRoadsCombination(city, bestHistory.City, currentCost + bestHistory.Cost, moveHistory);
+                moveHistory.pop();
+                city.ConnectedCities.pop();
+            });
         });
     }
 
@@ -132,7 +134,7 @@ class Game{
         let nextMove = this._defineShortestDirection(currentCoordinates, targetCoordinates);
         if(this._isArrivedToCity(nextMove, targetCoordinates)){
             return {
-                Cost: cost,
+                Cost: cost + this.Map._getCoordinateCost(targetCoordinates),
                 Road: road
             };
         }
@@ -177,8 +179,9 @@ class Game{
 
     _handleMoveToPoint(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost){
         if(this._isArrivedToCity(point, targetCoordinates)){
-            if(this.BestCost > currentCost){
-                this.BestCost = currentCost
+            let NextCost = currentCost + this.Map._getCoordinateCost(targetCoordinates);
+            if(this.BestCost > NextCost){
+                this.BestCost = NextCost;
                 this.BestRoads = Object.assign({}, moveHistory);
             }
             return;
