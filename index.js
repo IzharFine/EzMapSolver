@@ -79,8 +79,9 @@ class Game{
                         this._destroyAllRoads();       
                         this.BestCost = shortestRoad.Cost;
                         this.BestRoads = Object.assign({}, shortestRoad.Road);
-
+                        
                         this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
+                        this.BestCost += this.Map._getCoordinateCost(requiredCity.Coordinates);
                         if(!city.BestHistoryByResource[resource])
                             city.BestHistoryByResource[resource] = [];
                         city.BestHistoryByResource[resource].push({"City": requiredCity, "Cost": this.BestCost, "Roads": this.BestRoads});
@@ -134,7 +135,7 @@ class Game{
         let nextMove = this._defineShortestDirection(currentCoordinates, targetCoordinates);
         if(this._isArrivedToCity(nextMove, targetCoordinates)){
             return {
-                Cost: cost + this.Map._getCoordinateCost(targetCoordinates),
+                Cost: cost,
                 Road: road
             };
         }
@@ -179,9 +180,8 @@ class Game{
 
     _handleMoveToPoint(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost){
         if(this._isArrivedToCity(point, targetCoordinates)){
-            let NextCost = currentCost + this.Map._getCoordinateCost(targetCoordinates);
-            if(this.BestCost > NextCost){
-                this.BestCost = NextCost;
+            if(this.BestCost > currentCost){
+                this.BestCost = currentCost;
                 this.BestRoads = Object.assign({}, moveHistory);
             }
             return;
