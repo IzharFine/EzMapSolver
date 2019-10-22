@@ -72,8 +72,7 @@ class Game{
                 missingResources.forEach(resource => {
                     let requiredCities = this._getCitiesByResource(resource);
                     requiredCities.forEach(requiredCity => {
-                        this._markPoint(city, false);
-                        this._markPoint(requiredCity, false);
+                        this._markPoints([city, requiredCity], false);
 
                         let shortestRoad = this._getShortestRoad(city.Coordinates, requiredCity.Coordinates, [city.Coordinates], 0, true);
                         this._destroyAllRoads();       
@@ -86,19 +85,20 @@ class Game{
                             city.BestHistoryByResource[resource] = [];
                         city.BestHistoryByResource[resource].push({"City": requiredCity, "Cost": this.BestCost, "Roads": this.BestRoads});
                         
-                        this._markPoint(city, true);
-                        this._markPoint(requiredCity, true);
+                        this._markPoints([city, requiredCity], true);
                     });
                 });
             }
         });
     }
 
-    _markPoint(point, unMark){
-        if(!unMark)
+    _markPoints(points, unMark){
+        points.forEach(point =>{
+            if(!unMark)
             this.Map.Tiles[point.Coordinates.Row][point.Coordinates.Column].DOMObj.classList.add("running-now");
         else
             this.Map.Tiles[point.Coordinates.Row][point.Coordinates.Column].DOMObj.classList.remove("running-now");
+        })
     }
 
     _findBestRoadsCombination(city, bestCityRoad, currentCost, moveHistory){
@@ -133,47 +133,47 @@ class Game{
 
     _getShortestRoad(currentCoordinates, targetCoordinates, road, cost, canDraw){
         let nextMove = this._defineShortestDirection(currentCoordinates, targetCoordinates);
+        if(canDraw)
+            this.Map.Tiles[currentCoordinates.Row][currentCoordinates.Column].buildRoad();
         if(this._isArrivedToCity(nextMove, targetCoordinates)){
             return {
                 Cost: cost,
                 Road: road
             };
         }
-        if(canDraw)
-            this.Map.Tiles[currentCoordinates.Row][currentCoordinates.Column].buildRoad();
         cost += this.Map._getCoordinateCost(nextMove);
         road.push(nextMove);
         return this._getShortestRoad(nextMove, targetCoordinates, road, cost, canDraw);
     }
 
     _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
-        let topPoint = this._moveTop(currentCoordinates.Column, currentCoordinates.Row);
         if(lastMove != LastMoveEnum.Bottom){
+            let topPoint = this._moveTop(currentCoordinates.Column, currentCoordinates.Row);
             this._handleMoveToPoint(topPoint, targetCoordinates, LastMoveEnum.Top, moveHistory, currentCost);
         }
 
-        let topRightPoint = this._moveTopRight(currentCoordinates.Column, currentCoordinates.Row);
         if(lastMove != LastMoveEnum.BottomLeft){
+            let topRightPoint = this._moveTopRight(currentCoordinates.Column, currentCoordinates.Row);
             this._handleMoveToPoint(topRightPoint, targetCoordinates, LastMoveEnum.TopRight, moveHistory, currentCost);
         }
 
-        let bottomRightPoint = this._moveBottomRight(currentCoordinates.Column, currentCoordinates.Row);
         if(lastMove != LastMoveEnum.TopLeft){
+            let bottomRightPoint = this._moveBottomRight(currentCoordinates.Column, currentCoordinates.Row);
             this._handleMoveToPoint(bottomRightPoint, targetCoordinates, LastMoveEnum.BottomRight, moveHistory, currentCost);
         }
 
-        let bottomPoint = this._moveBottom(currentCoordinates.Column, currentCoordinates.Row); 
         if(lastMove != LastMoveEnum.Top){
+            let bottomPoint = this._moveBottom(currentCoordinates.Column, currentCoordinates.Row); 
             this._handleMoveToPoint(bottomPoint, targetCoordinates, LastMoveEnum.Bottom, moveHistory, currentCost);
         }
 
-        let bottomLeftPoint = this._moveBottomLeft(currentCoordinates.Column, currentCoordinates.Row); 
          if(lastMove != LastMoveEnum.TopRight){
+            let bottomLeftPoint = this._moveBottomLeft(currentCoordinates.Column, currentCoordinates.Row); 
             this._handleMoveToPoint(bottomLeftPoint, targetCoordinates, LastMoveEnum.BottomLeft, moveHistory, currentCost);
         }
 
-        let topLeftPoint = this._moveTopLeft(currentCoordinates.Column, currentCoordinates.Row);
         if(lastMove != LastMoveEnum.BottomRight){
+            let topLeftPoint = this._moveTopLeft(currentCoordinates.Column, currentCoordinates.Row);
             this._handleMoveToPoint(topLeftPoint, targetCoordinates, LastMoveEnum.TopLeft, moveHistory, currentCost);
         }
     }
