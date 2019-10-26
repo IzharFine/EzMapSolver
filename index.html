@@ -105,9 +105,9 @@
 
 <script>
     function start(){
+        let animationType, delay, selectedAnimation;
         if(document.querySelector("body div"))
             document.querySelector("body div").remove();
-        let animationType, delay, selectedAnimation;
         delay = document.getElementById("delay").value;
         selectedAnimation = document.querySelector("input[type=radio]:checked").value;
         Object.keys(AnimationTypeEnum).forEach(key => {
@@ -117,8 +117,8 @@
             }
         })
         let game = new Game(document.getElementById('Terrains').value,
-         document.getElementById('Cities').value,
-         animationType, delay);
+                             document.getElementById('Cities').value,
+                             animationType, delay);
         game.start();
     }
 </script>
