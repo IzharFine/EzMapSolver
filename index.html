@@ -74,6 +74,11 @@
         </style>
     </head>
     <body>
+        Delay: <input type="number" value="100" id="delay" min="0">
+        None: <input type="radio" name="animationType" value="none">
+        Each Move: <input type="radio" name="animationType" value="eachMove" checked>
+        Arrive To City: <input type="radio" name="animationType" value="arriveToCity" checked>Arrive To City
+        <br/>
         <textarea id="Terrains" placeholder="Terrains">
                 [open, open, open, wood, wood, wood, wood, wood],
                 [open, open, wood, open, open, wood, wood, wood],
@@ -95,11 +100,6 @@
                 (6, 7), Produce, Ore
         </textarea>
         <input type="button" value="solve" onClick="start()">
-        <br/>
-        Delay: <input type="number" value="100" id="delay" min="0">
-        None: <input type="radio" name="animationType" value="none">
-        Each Move: <input type="radio" name="animationType" value="eachMove" checked>
-        Arrive To City: <input type="radio" name="animationType" value="arriveToCity" checked>Arrive To City
     </body>
 </html>
 
