@@ -1,10 +1,12 @@
 class Game{
-    constructor(terrainsInput, citiesInput){
+    constructor(terrainsInput, citiesInput, animationType, delay){
         this.Map = null;
         this.Terrains = terrainsInput;
         this.Cities = citiesInput;
         this.BestCost = 0;
         this.BestRoads = [];
+        this.AnimationType = animationType || false;
+        this.Delay = delay || 0;
     }
 
     start(){
@@ -34,16 +36,11 @@ class Game{
             }
             map._addTilesRow(tileRow);
         }
-        
-        this.Cities.forEach(city => {
-            map.Tiles[city.Coordinates.Row][city.Coordinates.Column].City = city;
-            map.Tiles[city.Coordinates.Row][city.Coordinates.Column].DOMObj.classList.add("have-city");
-        });
         return map;
     }
 
-    _solveMap(){
-        this._getRoadsForMissingResources();
+    async _solveMap(){
+        await this._getRoadsForMissingResources();
         this.Cities.forEach(city => {
             this.BestCost = null;
             this._findBestRoadsCombination(city, null, 0, []);
@@ -53,6 +50,10 @@ class Game{
     }
 
     _drawFinalSolution(){
+        this.Cities.forEach(city => {
+            this.Map.Tiles[city.Coordinates.Row][city.Coordinates.Column].City = city;
+            this.Map.Tiles[city.Coordinates.Row][city.Coordinates.Column].DOMObj.classList.add("have-city");
+        });
         this.Cities.map(c => c.BestHistoryByResource).forEach(bestHistoryModels => {
             let citiesToContent = Object.keys(bestHistoryModels).length;
             for(let i = 0 ; i < citiesToContent ; i++){
@@ -65,13 +66,13 @@ class Game{
         });
     }
 
-    _getRoadsForMissingResources(){
-        this.Cities.forEach(city => {
+    async _getRoadsForMissingResources(){
+        for(let city of this.Cities){
             let missingResources = this._getMissingResources(city);
             if(missingResources.length){
-                missingResources.forEach(resource => {
+                for(let resource of missingResources){
                     let requiredCities = this._getCitiesByResource(resource);
-                    requiredCities.forEach(requiredCity => {
+                    for(let requiredCity of requiredCities){
                         this._markPoints([city, requiredCity], false);
 
                         let shortestRoad = this._getShortestRoad(city.Coordinates, requiredCity.Coordinates, [city.Coordinates], 0, true);
@@ -79,17 +80,17 @@ class Game{
                         this.BestCost = shortestRoad.Cost;
                         this.BestRoads = Object.assign({}, shortestRoad.Road);
                         
-                        this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
+                        await this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
                         this.BestCost += this.Map._getCoordinateCost(requiredCity.Coordinates);
                         if(!city.BestHistoryByResource[resource])
                             city.BestHistoryByResource[resource] = [];
                         city.BestHistoryByResource[resource].push({"City": requiredCity, "Cost": this.BestCost, "Roads": this.BestRoads});
                         
                         this._markPoints([city, requiredCity], true);
-                    });
-                });
+                    }
+                }
             }
-        });
+        }
     }
 
     _markPoints(points, unMark){
@@ -146,40 +147,42 @@ class Game{
         return this._getShortestRoad(nextMove, targetCoordinates, road, cost, canDraw);
     }
 
-    _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
+    async _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
         if(lastMove != LastMoveEnum.Bottom){
             let topPoint = this._moveTop(currentCoordinates.Column, currentCoordinates.Row);
-            this._handleMoveToPoint(topPoint, targetCoordinates, LastMoveEnum.Top, moveHistory, currentCost);
+            await this._handleMoveToPoint(topPoint, targetCoordinates, LastMoveEnum.Top, moveHistory, currentCost);
         }
 
         if(lastMove != LastMoveEnum.BottomLeft){
             let topRightPoint = this._moveTopRight(currentCoordinates.Column, currentCoordinates.Row);
-            this._handleMoveToPoint(topRightPoint, targetCoordinates, LastMoveEnum.TopRight, moveHistory, currentCost);
+            await this._handleMoveToPoint(topRightPoint, targetCoordinates, LastMoveEnum.TopRight, moveHistory, currentCost);
         }
 
         if(lastMove != LastMoveEnum.TopLeft){
             let bottomRightPoint = this._moveBottomRight(currentCoordinates.Column, currentCoordinates.Row);
-            this._handleMoveToPoint(bottomRightPoint, targetCoordinates, LastMoveEnum.BottomRight, moveHistory, currentCost);
+            await this._handleMoveToPoint(bottomRightPoint, targetCoordinates, LastMoveEnum.BottomRight, moveHistory, currentCost);
         }
 
         if(lastMove != LastMoveEnum.Top){
             let bottomPoint = this._moveBottom(currentCoordinates.Column, currentCoordinates.Row); 
-            this._handleMoveToPoint(bottomPoint, targetCoordinates, LastMoveEnum.Bottom, moveHistory, currentCost);
+            await this._handleMoveToPoint(bottomPoint, targetCoordinates, LastMoveEnum.Bottom, moveHistory, currentCost);
         }
 
          if(lastMove != LastMoveEnum.TopRight){
             let bottomLeftPoint = this._moveBottomLeft(currentCoordinates.Column, currentCoordinates.Row); 
-            this._handleMoveToPoint(bottomLeftPoint, targetCoordinates, LastMoveEnum.BottomLeft, moveHistory, currentCost);
+            await this._handleMoveToPoint(bottomLeftPoint, targetCoordinates, LastMoveEnum.BottomLeft, moveHistory, currentCost);
         }
 
         if(lastMove != LastMoveEnum.BottomRight){
             let topLeftPoint = this._moveTopLeft(currentCoordinates.Column, currentCoordinates.Row);
-            this._handleMoveToPoint(topLeftPoint, targetCoordinates, LastMoveEnum.TopLeft, moveHistory, currentCost);
+            await this._handleMoveToPoint(topLeftPoint, targetCoordinates, LastMoveEnum.TopLeft, moveHistory, currentCost);
         }
     }
 
-    _handleMoveToPoint(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost){
+    async _handleMoveToPoint(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost){
         if(this._isArrivedToCity(point, targetCoordinates)){
+            if(this.AnimationType == AnimationTypeEnum.ArriveToCity)
+                await this._sleep(this.Delay);
             if(this.BestCost > currentCost){
                 this.BestCost = currentCost;
                 this.BestRoads = Object.assign({}, moveHistory);
@@ -188,14 +191,21 @@ class Game{
         }
         if(this._canMoveToPoint(point, targetCoordinates, currentCost, moveHistory)){
             let targetTile = this.Map.Tiles[point.Row][point.Column];
-            targetTile.buildRoad();
-            moveHistory.push(point);
             
-            this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
+            targetTile.buildRoad();
+            if(this.AnimationType == AnimationTypeEnum.EachMove)
+                await this._sleep(this.Delay);
+            moveHistory.push(point);
+    
+            await this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
 
             moveHistory.pop();
             targetTile.destroyRoad();
         }
+    }
+
+    _sleep(ms){
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     _canMoveToPoint(point, targetCoordinates, currentCost, moveHistory){
@@ -539,4 +549,10 @@ var LastMoveEnum = {
     Bottom:3,
     BottomLeft:4,
     TopLeft:5
+}
+
+var AnimationTypeEnum = {
+    None:0,
+    EachMove:1,
+    ArriveToCity:2
 }
