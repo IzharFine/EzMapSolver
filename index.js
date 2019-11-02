@@ -183,21 +183,21 @@ class Game{
         if(this._isArrivedToCity(point, targetCoordinates)){
             if(this.AnimationType == AnimationTypeEnum.ArriveToCity)
                 await this._sleep(this.Delay);
+            currentCost += this.Map._getCoordinateCost(point);
             if(this.BestCost > currentCost){
                 this.BestCost = currentCost;
                 this.BestRoads = Object.assign({}, moveHistory);
             }
-            return;
         }
-        if(this._canMoveToPoint(point, targetCoordinates, currentCost, moveHistory)){
+        else if(this._canMoveToPoint(point, targetCoordinates, currentCost, moveHistory)){  
             let targetTile = this.Map.Tiles[point.Row][point.Column];
-            
+          
             targetTile.buildRoad();
             if(this.AnimationType == AnimationTypeEnum.EachMove)
                 await this._sleep(this.Delay);
             moveHistory.push(point);
     
-            await this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
+            await this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += this.Map._getCoordinateCost(point));
 
             moveHistory.pop();
             targetTile.destroyRoad();
