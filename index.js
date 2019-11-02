@@ -142,9 +142,8 @@ class Game{
                 Road: road
             };
         }
-        cost += this.Map._getCoordinateCost(nextMove);
         road.push(nextMove);
-        return this._getShortestRoad(nextMove, targetCoordinates, road, cost, canDraw);
+        return this._getShortestRoad(nextMove, targetCoordinates, road, cost += this.Map._getCoordinateCost(nextMove), canDraw);
     }
 
     async _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
