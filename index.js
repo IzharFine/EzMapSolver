@@ -197,7 +197,7 @@ class Game{
                 await this._sleep(this.Delay);
             moveHistory.push(point);
     
-            await this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += this.Map._getCoordinateCost(point));
+            await this._getLowestCostRoad(point, targetCoordinates, lastMoveEnum, moveHistory, currentCost += targetTile.Terrain.Cost);
 
             moveHistory.pop();
             targetTile.destroyRoad();
