@@ -210,9 +210,9 @@ class Game{
 
     _canMoveToPoint(point, targetCoordinates, currentCost, moveHistory){
         return !this.Map._isInvalidRange(point) &&
-         this.Map._getCoordinateCost(point) + currentCost < this.BestCost &&
+         this.Map._getCoordinateCost(point) + currentCost <= this.BestCost &&
          !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true) &&
-         this._getShortestRoad(point, targetCoordinates, [], 0, false).Road.length + currentCost < this.BestCost;
+         this._getShortestRoad(point, targetCoordinates, [], 0, false).Road.length + currentCost <= this.BestCost;
     }
 
     _isArrivedToCity(currentCoordinates, targetCoordinates){
