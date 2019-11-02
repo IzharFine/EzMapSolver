@@ -134,6 +134,7 @@ class Game{
 
     _getShortestRoad(currentCoordinates, targetCoordinates, road, cost, canDraw){
         let nextMove = this._defineShortestDirection(currentCoordinates, targetCoordinates);
+        cost += this.Map._getCoordinateCost(nextMove);
         if(canDraw)
             this.Map.Tiles[currentCoordinates.Row][currentCoordinates.Column].buildRoad();
         if(this._isArrivedToCity(nextMove, targetCoordinates)){
@@ -143,7 +144,7 @@ class Game{
             };
         }
         road.push(nextMove);
-        return this._getShortestRoad(nextMove, targetCoordinates, road, cost += this.Map._getCoordinateCost(nextMove), canDraw);
+        return this._getShortestRoad(nextMove, targetCoordinates, road, cost, canDraw);
     }
 
     async _getLowestCostRoad(currentCoordinates, targetCoordinates, lastMove, moveHistory, currentCost){
