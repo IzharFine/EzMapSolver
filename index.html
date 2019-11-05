@@ -74,6 +74,9 @@
         </style>
     </head>
     <body>
+        Generate map - Size:<input type="number" min="1" value="8" id="mapSize">
+        <input type="button" value="Generate" onclick="GenerateMap(document.getElementById('mapSize').value)">
+        <br/>
         Animation - Delay:<input type="number" value="100" id="delay" min="0">
         None:<input type="radio" name="animationType" value="none">
         Each Move:<input type="radio" name="animationType" value="eachMove" checked>
