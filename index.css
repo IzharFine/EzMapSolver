@@ -1,0 +1,99 @@
+.hex {
+    float: left;
+    margin-right: -26px;
+    margin-bottom: -50px;
+}
+.hex .left {
+    float: left;
+    width: 0;
+    border-right: 30px solid #6C6;
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+}
+.hex .middle {
+    float: left;
+    width: 60px;
+    height: 104px;
+    background: #6C6;
+}
+.hex .right {
+    float: left;
+    width: 0;
+    border-left: 30px solid #6C6;
+    border-top: 52px solid transparent;
+    border-bottom: 52px solid transparent;
+}
+.hex-row {
+    clear: left;
+}
+.hex:nth-child(even) {
+    margin-top: 53px;
+}
+
+
+.hex.have-road .left{
+    border-right: 30px solid black!important;
+}
+
+.hex.have-road .middle{
+    background: black!important;
+}
+
+.hex.have-road .right{
+    border-left: 30px solid black!important;
+}
+
+.hex.have-city .left{
+    border-right: 30px solid grey!important;
+}
+
+.hex.have-city .middle{
+    background: grey!important;
+}
+
+.hex.have-city .right{
+    border-left: 30px solid grey!important;
+}
+
+.hex.running-now .left{
+    border-right: 30px solid  firebrick!important;
+}
+
+.hex.running-now .middle{
+    background:  firebrick!important;
+}
+
+.hex.running-now .right{
+    border-left: 30px solid firebrick!important;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: .75rem;
+}
+
+.container > div{
+    background-color: #c2c2c2;
+    padding: 1.5rem;
+    border-radius: .25rem;
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+#output > div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#start{
+    width: 100%;
+    background-color: #1e851e;
+    border: none;
+    color: white;
+    padding: 0.55rem;
+    font-weight: bold;
+}
