@@ -1,5 +1,5 @@
 class Game{
-    constructor(terrainsInput, citiesInput, animationType, delay){
+    constructor(terrainsInput, citiesInput, animationType, delay, appendTarget){
         this.Map = null;
         this.Terrains = terrainsInput;
         this.Cities = citiesInput;
@@ -7,6 +7,7 @@ class Game{
         this.BestRoads = [];
         this.AnimationType = animationType || false;
         this.Delay = delay || 0;
+        this.AppendTarget = appendTarget;
     }
 
     start(){
@@ -17,7 +18,7 @@ class Game{
     _buildMap(){
         let map = new Map();
         map._buildDOMObj();
-        document.querySelector("body").appendChild(map.DOMObj);
+        document.querySelector(this.AppendTarget).appendChild(map.DOMObj);
 
         let serializer = new InputSerializer();
         this.Terrains = serializer.serialize(InputTypeEnum.Terrains, this.Terrains);
