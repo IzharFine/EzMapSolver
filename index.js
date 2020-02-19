@@ -81,7 +81,7 @@ class Game{
                         this.BestCost = shortestRoad.Cost;
                         this.BestRoads = Object.assign({}, shortestRoad.Road);
                         
-                        await this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0, shortestRoad.Cost);
+                        await this._getLowestCostRoad(city.Coordinates, requiredCity.Coordinates, null, [city.Coordinates], 0);
                         this.BestCost += this.Map._getCoordinateCost(requiredCity.Coordinates);
                         if(!city.BestHistoryByResource[resource])
                             city.BestHistoryByResource[resource] = [];
@@ -211,7 +211,7 @@ class Game{
     _canMoveToPoint(point, targetCoordinates, currentCost, moveHistory){
         return !this.Map._isInvalidRange(point) &&
          this.Map._getCoordinateCost(point) + currentCost < this.BestCost &&
-         !moveHistory.map(move => move.Row === point.Row && move.Column === point.Column).includes(true) &&
+         !this.Map.Tiles[point.Row][point.Column].HaveRoad &&
          this._getShortestRoad(point, targetCoordinates, [], 0, false).Road.length + currentCost < this.BestCost;
     }
 
